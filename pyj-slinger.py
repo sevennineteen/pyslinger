@@ -20,8 +20,8 @@ def populate_node(path, properties, **kwargs):
     # properties with a type need to be hinted
     hinted = [ hp for hp in properties if hp.has_key('type') ]
     for hp in hinted:
-        if len(hp) < 2:
-            fields.append((p['name'], p['value'])) # single items
+        if hp['value'].__class__.__name__ == 'str':
+            fields.append((hp['name'], hp['value'])) # single item
         else:
             map(lambda i: fields.append((hp['name'], i)), hp['value']) # multiple items
         # add the type hint
