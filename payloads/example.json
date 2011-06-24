@@ -1,0 +1,89 @@
+{ "path": "/content/geometrixx/my-first-json-page",
+  "properties": [
+    { "name": "jcr:primaryType",
+      "value": "cq:Page" }],
+    
+  "nodes": [
+    { "path": "jcr:content",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "cq:PageContent"},
+        { "name": "sling:resourceType",
+          "value": "geometrixx/components/widepage"},
+        { "name": "jcr:title",
+          "value": "My First JSON Page" },
+        { "name": "cq:template",
+          "value": "/apps/geometrixx/templates/widepage"},
+        { "name": "cq:tags",
+          "type": "String[]",
+          "value": ["stockphotography:technology/technology_symbols_m", "marketing:interest/services", "json", "connectors"] },
+        { "name": "jcr:description",
+          "value": "Sample content loaded to CQ via a JSON payload." },
+        { "name": "sling:vanityPath",
+          "value": "/connector-examples/json/" }]},
+    
+    { "path": "jcr:content/title",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "nt:unstructured"},
+        { "name": "sling:resourceType",
+          "value": "geometrixx/components/title" },
+        { "name": "jcr:title",
+          "value": "A JSON-derived Example Page" },
+        { "name": "type",
+          "value": "extralarge" },
+        { "name": "textIsRich",
+          "value": "true" }]},
+    
+    { "path": "jcr:content/par",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "nt:unstructured"},
+        { "name": "sling:resourceType",
+          "value": "foundation/components/parsys" }]},
+    
+    { "path": "jcr:content/par/text",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "nt:unstructured"},
+        { "name": "sling:resourceType",
+          "value": "foundation/components/text" },
+        { "name": "cq:cssClass",
+          "value": "text_large" },
+        { "name": "text",
+          "value": "<p>The content of this page originally resided in a <a href=\"http://en.wikipedia.org/wiki/Json\">JSON</a> document and was created in CQ by a scripted POST to the <a href=\"http://sling.apache.org/site/manipulating-content-the-slingpostservlet-servletspost.html\">SlingPostServelet</a>.</p>" }]},
+    
+    { "path": "jcr:content/par/textimage",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "nt:unstructured"},
+        { "name": "sling:resourceType",
+          "value": "foundation/components/textimage" },
+        { "name": "cq:cssClass",
+          "value": "image_right" },
+        { "name": "text",
+          "value": "<p><b>How was it created?</b></p><ol><li>Construct a JSON representation of the content, including all nodes which must be explicitly set. This is the in the format:<pre>\n{ \"path\": \"/content/geometrixx/my-first-json-page\",\n  \"properties\": [\n    { \"name\": \"jcr:primaryType\",\n      \"value\": \"cq:Page\" }],\n \n  \"nodes\": [\n    { \"path\": \"jcr:content\",\n      \"properties\": [\n        { \"name\": \"jcr:primaryType\",\n          \"value\": \"cq:PageContent\"},\n        { \"name\": \"cq:tags\",\n          \"type\": \"String[]\",\n          \"value\": [\"marketing:interest/services\", \"json\"] }]}\n  ]\n}\n</pre></li><li>Run the <a href=\"http://www.python.org/\">Python</a> script <code>pyj-slinger.py</code>, supplying necessary parameters for <b>CQ server</b>, <b>payloads path</b>, and <b>user credentials</b>.</li><li>Admire your handiwork.</li></ol>" },
+        { "name": "textIsRich",
+          "value": "true" }]},
+          
+    { "path": "jcr:content/par/textimage/image",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "nt:unstructured"},
+        { "name": "sling:resourceType",
+          "value": "foundation/components/image" },
+        { "name": "fileReference",
+          "value": "/content/dam/geometrixx/travel/subway_train.jpg" },
+        { "name": "imageRotate",
+          "value": "0" }]},
+          
+    { "path": "jcr:content/par/flash",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "nt:unstructured"},
+        { "name": "sling:resourceType",
+          "value": "foundation/components/flash" },
+        { "name": "fileReference",
+          "value": "/content/dam/geometrixx/movies/circles.swf" }]}
+  ]
+}
