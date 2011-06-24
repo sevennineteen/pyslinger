@@ -45,7 +45,7 @@ By default, properties are assumed to be of type `String` and therefore the `typ
 
 2. In a terminal, navigate to the directory of `pyj-slinger.py` and issue the following command:
 
-    python pyj-slinger.py [cq_server] [username] [password] [payloads_path]
+    `python pyj-slinger.py [cq_server] [username] [password] [payloads_path]`
 
 The provided `run_demo.sh` contains a default command appropriate for out-of-the-box CQ instances.
 
