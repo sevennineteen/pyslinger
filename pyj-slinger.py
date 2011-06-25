@@ -18,7 +18,7 @@ def populate_node(path, properties, **kwargs):
     fields = [ (p['name'], p['value']) for p in properties if not p.has_key('type')]
     
     # properties with a type need to be hinted
-    hinted = [ hp for hp in properties if hp.has_key('type') ]
+    hinted = [ hp for hp in properties if hp.has_key('type') and hp['type'] != 'nt:file']
     for hp in hinted:
         if hp['value'].__class__.__name__ == 'str':
             fields.append((hp['name'], hp['value'])) # single item
@@ -27,7 +27,12 @@ def populate_node(path, properties, **kwargs):
         # add the type hint
         fields.append(('%s@TypeHint' % hp['name'], hp['type']))
     
-    post_multipart(path, fields, [], headers, **kwargs)
+    # properties typed as nt:file should be handled as files
+    files = [ (p['name'], p['value'].split('/')[-1], read_file(p['value'], 'rb')) for p in properties if p.has_key('type') and p['type'] == 'nt:file']
+    if files:
+        fields.append(('%s@TypeHint' % p['name'], p['type']))
+    
+    post_multipart(path, fields, files, headers, **kwargs)
 
 def main():
     "Iterate through all JSON payloads, passing each node's path and properties."
@@ -36,7 +41,7 @@ def main():
     
         # populate the page
         base_path = cq_server + payload['path']
-        populate_node(base_path, payload['properties'], label='  Page')
+        populate_node(base_path, payload['properties'], label='  Content item')
     
         # populate the nodes
         for node in payload['nodes']:

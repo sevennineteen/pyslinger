@@ -22,7 +22,10 @@ def post_commentator(func):
         try:
             print '%s %s: %s' % (kwargs.get('label', 'Node'), statuses[response[0]['status']], args[0])
         except:
-            print html2text(response[1]).replace('\n\n', '\n')
+            try:
+                print html2text(response[1]).replace('\n\n', '\n')
+            except:
+                print response[1]
     return decorated
 
 def get_content_type(filename):
@@ -73,10 +76,10 @@ def get_file_list(path, regex_filter=''):
            file_list.append(os.path.join(dirname, filename))
     return [f for f in file_list if re.match(regex_filter, f)]
 
-def read_file(file_path, encoding=None):
+def read_file(file_path, mode='r', encoding=None):
     "Returns content of file at specified path."
     try:
-        file_obj = codecs.open(file_path, 'r', encoding)
+        file_obj = codecs.open(file_path, mode, encoding)
         contents = file_obj.read()
         file_obj.close()
         return contents

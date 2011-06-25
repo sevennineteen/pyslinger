@@ -51,7 +51,7 @@
         { "name": "cq:cssClass",
           "value": "text_large" },
         { "name": "text",
-          "value": "<p>The content of this page originally resided in a <a href=\"http://en.wikipedia.org/wiki/Json\">JSON</a> document and was created in CQ by a scripted POST to the <a href=\"http://sling.apache.org/site/manipulating-content-the-slingpostservlet-servletspost.html\">SlingPostServelet</a>.</p>" }]},
+          "value": "<p>The content of this page originally resided in a <a href=\"http://en.wikipedia.org/wiki/Json\">JSON</a> document and was created in CQ by a scripted POST to the <a href=\"http://sling.apache.org/site/manipulating-content-the-slingpostservlet-servletspost.html\">SlingPostServlet</a>.</p>" }]},
     
     { "path": "jcr:content/par/textimage",
       "properties": [
@@ -73,7 +73,7 @@
         { "name": "sling:resourceType",
           "value": "foundation/components/image" },
         { "name": "fileReference",
-          "value": "/content/dam/geometrixx/travel/subway_train.jpg" },
+          "value": "/content/dam/geometrixx/my_images/austin_motel.jpg" },
         { "name": "imageRotate",
           "value": "0" }]},
           

@@ -1,0 +1,35 @@
+{ "path": "/content/dam/geometrixx/my_images/austin_motel.jpg",
+  "properties": [
+    { "name": "jcr:primaryType",
+      "value": "dam:Asset" }],
+    
+  "nodes": [
+    { "path": "jcr:content",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "dam:AssetContent" }]},
+    
+    { "path": "jcr:content/metadata",
+      "properties": [
+        { "name": "dc:Description",
+          "value": "So close yet so far out" },
+        { "name": "dc:title",
+          "value": "Austin Motel" },
+        { "name": "dc:creator",
+          "value": "Patric DelCioppo" },
+        { "name": "cq:tags",
+          "type": "String[]",
+          "value": ["stockphotography:locations_and_travel/landmarks"] }]},
+    
+    { "path": "jcr:content/renditions",
+      "properties": [
+        { "name": "jcr:primaryType",
+          "value": "nt:folder" }]},
+    
+    { "path": "jcr:content/renditions",
+      "properties": [
+        { "name": "original",
+          "type": "nt:file",
+          "value": "./payloads/asset_files/austin_motel.jpg" }]}
+  ]
+}
