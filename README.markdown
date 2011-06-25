@@ -39,7 +39,7 @@ By default, properties are assumed to be of type `String` and therefore the `typ
 
 See the supplied `page_example.json` file for a real-world representation of a CQ Geometrixx page.
 
-> Loading binary files (e.g., images) is also supported. The JSON payload follows a similar format, but includes a renditions node which includes a path to the local file.
+> Loading binary files (e.g., images) is also supported. The JSON payload follows a similar format, but includes a renditions node which includes a path to the local file. The supplied `asset_example.json` payload is used to load `austin_motel.jpg`.
 
 ### Execute Content Load
 
