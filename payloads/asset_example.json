@@ -23,11 +23,6 @@
     
     { "path": "jcr:content/renditions",
       "properties": [
-        { "name": "jcr:primaryType",
-          "value": "nt:folder" }]},
-    
-    { "path": "jcr:content/renditions",
-      "properties": [
         { "name": "original",
           "type": "nt:file",
           "value": "./payloads/asset_files/austin_motel.jpg" }]}
