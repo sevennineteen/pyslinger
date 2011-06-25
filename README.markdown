@@ -37,7 +37,9 @@ Each JSON payload should be structured in the following format:
 
 By default, properties are assumed to be of type `String` and therefore the `type` is omitted. For non-scalar values such as arrays (e.g., multiple tags in CQ), the `type` must be explicitly declared in the JSON payload.
 
-*Note: See the supplied `example.json` file for a real-world representation of a CQ Geometrixx page.*
+See the supplied `page_example.json` file for a real-world representation of a CQ Geometrixx page.
+
+> Loading binary files (e.g., images) is also supported. The JSON payload follows a similar format, but includes a renditions node which includes a path to the local file.
 
 ### Execute Content Load
 
