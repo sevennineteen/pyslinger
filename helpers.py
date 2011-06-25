@@ -55,7 +55,7 @@ def encode_multipart(fields, files):
     return content_type, body
 
 @post_commentator
-def post_multipart(url, fields={}, files={}, headers={}, credentials=None):
+def post_multipart(url, fields=[], files=[], headers={}, credentials=None):
     "Sends a POST containing multipart form data."
     http = httplib2.Http()
     if credentials:

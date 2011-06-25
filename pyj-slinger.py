@@ -27,7 +27,7 @@ def populate_node(path, properties, **kwargs):
         # add the type hint
         fields.append(('%s@TypeHint' % hp['name'], hp['type']))
     
-    post_multipart(path, fields, {}, headers, **kwargs)
+    post_multipart(path, fields, [], headers, **kwargs)
 
 def main():
     "Iterate through all JSON payloads, passing each node's path and properties."
