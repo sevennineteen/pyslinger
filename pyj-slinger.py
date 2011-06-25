@@ -8,7 +8,7 @@ assert len(sys.argv) == 5, "Supply cq_server, username, password, payload_path w
 cq_server, username, password, payloads_path = sys.argv[1:]
 
 headers = cq_auth_header(username, password) # username, password for CQ user
-json_paths = get_file_list(payloads_path) # directory containing JSON payloads
+json_paths = get_file_list(payloads_path, '.*\.json') # directory containing JSON payloads
 #------------------------------------------------------------------------------------------
 
 def populate_node(path, properties, **kwargs):

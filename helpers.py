@@ -1,6 +1,7 @@
 import sys
 import codecs
 import os
+import re
 import urllib
 import httplib2
 import base64
@@ -64,13 +65,13 @@ def post_multipart(url, fields=[], files=[], headers={}, credentials=None):
     headers.update({'Content-Type': content_type})
     return http.request(url, 'POST', body, headers=headers)
 
-def get_file_list(path):
-    "Returns list of all non-directory files under the path."
+def get_file_list(path, regex_filter=''):
+    "Returns list of all non-directory files under the path, with optional filter."
     file_list = []
     for dirname, dirnames, filenames in os.walk(path):
         for filename in filenames:
            file_list.append(os.path.join(dirname, filename))
-    return file_list
+    return [f for f in file_list if re.match(regex_filter, f)]
 
 def read_file(file_path, encoding=None):
     "Returns content of file at specified path."
