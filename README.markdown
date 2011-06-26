@@ -2,7 +2,7 @@
 
 ## Overview
 
-Py-slinger is a simple demonstration of loading content into a Java Content Repository such as [Adobe CQ 5](http://www.day.com/) from a JSON content representation.
+Py-slinger is a simple demonstration of loading content into a Java Content Repository such as [Adobe CQ5](http://www.day.com/) from a JSON content representation.
 
 A Python script parses the supplied JSON payload(s) and converts the content to a series of multipart form data posts processed by the target system's SlingPostServlet. No special connector code is needed on the target system, as this method takes advantage of Sling's RESTful nature to populate content nodes directly and in place.
 

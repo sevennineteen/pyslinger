@@ -1,8 +1,6 @@
-import sys
 import codecs
 import os
 import re
-import urllib
 import httplib2
 import base64
 import mimetypes
@@ -34,28 +32,28 @@ def get_content_type(filename):
 
 def encode_multipart(fields, files):
     "Generates multipart form data from supplied fields and files."
-    BOUNDARY = uuid4().hex
-    CRLF = '\r\n'
+    boundary = uuid4().hex
+    crlf = '\r\n'
     L = []
     for (name, value) in fields:
         map(lambda x: L.append(x), 
-            [   '--%s' % BOUNDARY,
+            [   '--%s' % boundary,
                 'Content-Disposition: form-data; name="%s"' % name,
                 '',
                 value,
                 ])
     for (name, filename, value) in files:
         map(lambda x: L.append(x), 
-            [   '--%s' % BOUNDARY,
+            [   '--%s' % boundary,
                 'Content-Disposition: form-data; name="%s"; filename="%s"' % (name, filename),
                 'Content-Type: %s' % get_content_type(filename),
                 '',
                 value,
                 ])
-    L.append('--' + BOUNDARY + '--')
+    L.append('--' + boundary + '--')
     L.append('')
-    body = CRLF.join(L)
-    content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
+    body = crlf.join(L)
+    content_type = 'multipart/form-data; boundary=%s' % boundary
     return content_type, body
 
 @post_commentator

@@ -1,23 +1,24 @@
+"This script executes loads supplied JSON payloads into Adobe CQ."
+
 import sys
-import codecs
 import simplejson as json
-from helpers import *
+from helpers import cq_auth_header, post_multipart, get_file_list, read_file
 from odict import odict
 
-#------ CUSTOM PARAMS // pass in via command line -----------------------------------------
-assert len(sys.argv) >= 5, "Supply cq_server, username, password, payload_path, [mode] when calling this script."
-cq_server, username, password, payloads_path = sys.argv[1:5]
+#------ CUSTOM PARAMS // pass in via command line -----------------------------
+assert len(sys.argv) >= 5, "Supply cq_server, username, password, payloads_path, [mode] when calling this script."
+CQ_SERVER, USERNAME, PASSWORD, PAYLOADS_PATH = sys.argv[1:5]
 
 try:
-    mode = sys.argv[5]
-except:
-    mode = 'itemwise'
-assert mode in ['itemwise', 'nodewise'], "Supported modes are 'itemwise' and 'nodewise'."
-print '> Loading %s...' % mode
+    MODE = sys.argv[5]
+except IndexError:
+    MODE = 'itemwise'
+assert MODE in ['itemwise', 'nodewise'], "Supported modes are 'itemwise' and 'nodewise'."
+print '> Loading %s...' % MODE
 
-headers = cq_auth_header(username, password) # username, password for CQ user
-json_paths = get_file_list(payloads_path, '.*\.json') # directory containing JSON payloads
-#------------------------------------------------------------------------------------------
+HEADERS = cq_auth_header(USERNAME, PASSWORD) # USERNAME, PASSWORD for CQ user
+JSON_PATHS = get_file_list(PAYLOADS_PATH, '.*\.json') # directory of .json files
+#------------------------------------------------------------------------------
 
 def populate_node(path, properties, **kwargs):
     "Organizes properties into form fields and posts the multipart form data."
@@ -36,11 +37,15 @@ def populate_node(path, properties, **kwargs):
         fields.append(('%s@TypeHint' % hp['name'], hp['type']))
     
     # properties typed as nt:file should be handled as files
-    files = [ (p['name'], p['value'].split('/')[-1], read_file(p['value'], 'rb')) for p in properties if p.has_key('type') and p['type'] == 'nt:file']
+    files = [   (   p['name'], p['value'].split('/')[-1], 
+                    read_file(p['value'], 'rb')
+                    ) 
+                for p in properties 
+                if p.has_key('type') and p['type'] == 'nt:file' ]
     if files:
         fields.append(('%s@TypeHint' % p['name'], p['type']))
     
-    post_multipart(path, fields, files, headers, **kwargs)
+    post_multipart(path, fields, files, HEADERS, **kwargs)
 
 def slingify(nodes):
     "Returns the node contents as Sling-ready JSON (and any binary file nodes)."
@@ -52,15 +57,16 @@ def slingify(nodes):
         
         # add the node's own properties
         node_name = node['path'].split('/')[-1]
-        node_data = odict((p['name'], p['value']) for p in node['properties'] if not p.get('type', None) == 'nt:file')
+        node_data = odict(  (p['name'], p['value']) for p in node['properties'] 
+                            if not p.get('type', None) == 'nt:file' )
         
         # add any binary nodes to file list
         if any(p.get('type', None) == 'nt:file' for p in node['properties']):
             file_nodes.append(node)
         
         # add its child nodes
-        for c in get_children(node):
-            node_data.update(transcribe_node(c))
+        for child in get_children(node):
+            node_data.update(transcribe_node(child))
         
         return {node_name: node_data}
     
@@ -73,7 +79,7 @@ def slingify(nodes):
     slingified_json = json.dumps(transcribe_node(sorted(nodes, key=lambda n:n['path'])[0]))
     return slingified_json, file_nodes
 
-def main(mode):
+def main():
     "Iterates through all JSON payloads, dispatching load according to supplied mode."
         
     def itemwise():
@@ -107,11 +113,11 @@ def main(mode):
             node_path = '/'.join([base_path, node['path']])
             populate_node(node_path, node['properties'], label='    Node')
     
-    for jp in json_paths:
-        payload = json.loads(read_file(jp))
-        base_path = cq_server + payload['path']
+    for json_path in JSON_PATHS:
+        payload = json.loads(read_file(json_path))
+        base_path = CQ_SERVER + payload['path']
         
-        locals()[mode]() # call function corresponding to mode
+        locals()[MODE]() # call function corresponding to mode
 
 if __name__ == "__main__":
-    main(mode)
+    main()
