@@ -1,6 +1,5 @@
 import sys
 import codecs
-import base64
 import simplejson as json
 from helpers import *
 from odict import odict
