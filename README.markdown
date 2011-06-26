@@ -1,8 +1,8 @@
-# pyj-slinger
+# py-slinger
 
 ## Overview
 
-Pyj-slinger is a simple demonstration of loading content into a Java Content Repository such as [Adobe CQ 5](http://www.day.com/) from a JSON content representation.
+Py-slinger is a simple demonstration of loading content into a Java Content Repository such as [Adobe CQ 5](http://www.day.com/) from a JSON content representation.
 
 A Python script parses the supplied JSON payload(s) and converts the content to a series of multipart form data posts processed by the target system's SlingPostServlet. No special connector code is needed on the target system, as this method takes advantage of Sling's RESTful nature to populate content nodes directly and in place.
 
@@ -45,9 +45,9 @@ See the supplied `page_example.json` file for a real-world representation of a C
 
 1. All JSON payloads for migration should be stored under a single directory (nested subfolders are OK).
 
-2. In a terminal, navigate to the directory of `pyj-slinger.py` and issue the following command:
+2. In a terminal, navigate to the directory of `py-slinger.py` and issue the following command:
 
-    `python pyj-slinger.py cq_server username password payloads_path [mode]`
+    `python py-slinger.py cq_server username password payloads_path [mode]`
 
 > Supported modes are `itemwise` and `nodewise`. 
 * In *itemwise* mode, a single POST request is used to load the content item, followed by separate requests for associated binary files (if any).
