@@ -1,4 +1,4 @@
-"This script executes loads supplied JSON payloads into Adobe CQ."
+"This script loads supplied JSON payloads into Adobe CQ."
 
 import sys
 import simplejson as json
