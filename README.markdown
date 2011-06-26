@@ -45,9 +45,9 @@ See the supplied `page_example.json` file for a real-world representation of a C
 
 1. All JSON payloads for migration should be stored under a single directory (nested subfolders are OK).
 
-2. In a terminal, navigate to the directory of `py-slinger.py` and issue the following command:
+2. In a terminal, navigate to the directory of `pyslinger.py` and issue the following command:
 
-    `python py-slinger.py cq_server username password payloads_path [mode]`
+    `python pyslinger.py cq_server username password payloads_path [mode]`
 
 > Supported modes are `itemwise` and `nodewise`. 
 
