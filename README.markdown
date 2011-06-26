@@ -47,9 +47,13 @@ See the supplied `page_example.json` file for a real-world representation of a C
 
 2. In a terminal, navigate to the directory of `pyj-slinger.py` and issue the following command:
 
-    `python pyj-slinger.py [cq_server] [username] [password] [payloads_path]`
+    `python pyj-slinger.py cq_server username password payloads_path [mode]`
 
-The provided `run_demo.sh` contains a default command appropriate for out-of-the-box CQ instances.
+> Supported modes are `itemwise` and `nodewise`. 
+* In *itemwise* mode, a single POST request is used to load the content item, followed by separate requests for associated binary files (if any).
+* In *nodewise* mode, a separate POST request is made for each node. This may be useful for debugging or making very precise updates.
+
+The provided `run_demo.sh` contains default commands appropriate for out-of-the-box CQ instances. This executes the script twice, loading content *itemwise* and *nodewise*, respectively.
 
 ## Caveats
 
