@@ -71,8 +71,10 @@ def slingify(nodes):
     slingified_json = json.dumps(transcribe_node(sorted(nodes, key=lambda n:n['path'])[0]))
     return slingified_json, file_nodes
 
-def itemwise(base_path, payload, **kwargs):
+def itemwise(payload, **kwargs):
     "Loads content item and nodes in a single request, except for binary assets."
+
+    base_path = kwargs.get('base_path', CQ_SERVER + payload['path'])
     
     # assemble content substructure and add to payload properties
     slingified_json, file_nodes = slingify(payload['nodes'])
@@ -91,8 +93,10 @@ def itemwise(base_path, payload, **kwargs):
         node_path = '/'.join([base_path, node['path']])
         populate_node(node_path, node['properties'], label='    Binary')
 
-def nodewise(base_path, payload, **kwargs):
+def nodewise(payload, **kwargs):
     "Loads content item and each node's content as a separate request."
+
+    base_path = kwargs.get('base_path', CQ_SERVER + payload['path'])
     
     # populate the page
     populate_node(base_path, payload['properties'], label='  Content item')
@@ -107,8 +111,8 @@ def main():
     
     for json_path in JSON_PATHS:
         payload = json.loads(read_file(json_path))
-        base_path = CQ_SERVER + payload['path']
-        globals()[MODE](base_path, payload) # call function corresponding to mode
+        
+        globals()[MODE](payload) # call function corresponding to mode
 
 if __name__ == "__main__":
     #------ CUSTOM PARAMS // pass in via command line -----------------------------
