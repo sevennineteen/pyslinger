@@ -71,7 +71,7 @@ def slingify(nodes):
     slingified_json = json.dumps(transcribe_node(sorted(nodes, key=lambda n:n['path'])[0]))
     return slingified_json, file_nodes
 
-def itemwise(payload, **kwargs):
+def load_item(payload, **kwargs):
     "Loads content item and nodes in a single request, except for binary assets."
 
     base_path = kwargs.get('base_path', CQ_SERVER + payload['path'])
@@ -93,7 +93,7 @@ def itemwise(payload, **kwargs):
         node_path = '/'.join([base_path, node['path']])
         populate_node(node_path, node['properties'], label='    Binary')
 
-def nodewise(payload, **kwargs):
+def load_node(payload, **kwargs):
     "Loads content item and each node's content as a separate request."
 
     base_path = kwargs.get('base_path', CQ_SERVER + payload['path'])
@@ -106,13 +106,18 @@ def nodewise(payload, **kwargs):
         node_path = '/'.join([base_path, node['path']])
         populate_node(node_path, node['properties'], label='    Node')
 
-def main():
+def main(mode):
     "Iterates through all JSON payloads, dispatching load according to supplied mode."
     
+    modes = {
+        'itemwise': load_item,
+        'nodewise': load_node
+    }
+
     for json_path in JSON_PATHS:
         payload = json.loads(read_file(json_path))
         
-        globals()[MODE](payload) # call function corresponding to mode
+        modes[mode](payload) # call function corresponding to mode
 
 if __name__ == "__main__":
     #------ CUSTOM PARAMS // pass in via command line -----------------------------
@@ -130,4 +135,4 @@ if __name__ == "__main__":
     JSON_PATHS = get_file_list(PAYLOADS_PATH, '.*\.json') # directory of .json files
     #------------------------------------------------------------------------------
 
-    main()
+    main(MODE)
