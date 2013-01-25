@@ -2,23 +2,15 @@
 
 import sys
 import simplejson as json
-from helpers import cq_auth_header, post_multipart, get_file_list, read_file
+from helpers import basic_authorize, post_multipart, get_file_list, read_file
 from odict import odict
 
-#------ CUSTOM PARAMS // pass in via command line -----------------------------
-assert len(sys.argv) >= 5, "Supply cq_server, username, password, payloads_path, [mode] when calling this script."
-CQ_SERVER, USERNAME, PASSWORD, PAYLOADS_PATH = sys.argv[1:5]
+# Initialize constants with sensible defaults
+CQ_SERVER = 'http://localhost:4502'
+USERNAME = 'admin'
+PASSWORD = 'admin'
+PAYLOADS_PATH= './payloads'
 
-try:
-    MODE = sys.argv[5]
-except IndexError:
-    MODE = 'itemwise'
-assert MODE in ['itemwise', 'nodewise'], "Supported modes are 'itemwise' and 'nodewise'."
-print '> Loading %s...' % MODE
-
-HEADERS = cq_auth_header(USERNAME, PASSWORD) # USERNAME, PASSWORD for CQ user
-JSON_PATHS = get_file_list(PAYLOADS_PATH, '.*\.json') # directory of .json files
-#------------------------------------------------------------------------------
 
 def populate_node(path, properties, **kwargs):
     "Organizes properties into form fields and posts the multipart form data."
@@ -79,45 +71,59 @@ def slingify(nodes):
     slingified_json = json.dumps(transcribe_node(sorted(nodes, key=lambda n:n['path'])[0]))
     return slingified_json, file_nodes
 
+def itemwise(base_path, payload, **kwargs):
+    "Loads content item and nodes in a single request, except for binary assets."
+    
+    # assemble content substructure and add to payload properties
+    slingified_json, file_nodes = slingify(payload['nodes'])
+    
+    new_props = (   (':operation', 'import'),
+                    (':contentType', 'json'),
+                    (':content', slingified_json)
+                    )
+    map(lambda p: payload['properties'].append({'name': p[0], 'value': p[1]}), new_props)
+
+    # populate the page
+    populate_node(base_path, payload['properties'], label='  Content item')
+    
+    # populate binaries
+    for node in file_nodes:
+        node_path = '/'.join([base_path, node['path']])
+        populate_node(node_path, node['properties'], label='    Binary')
+
+def nodewise(base_path, payload, **kwargs):
+    "Loads content item and each node's content as a separate request."
+    
+    # populate the page
+    populate_node(base_path, payload['properties'], label='  Content item')
+    
+    # populate the nodes
+    for node in payload['nodes']:
+        node_path = '/'.join([base_path, node['path']])
+        populate_node(node_path, node['properties'], label='    Node')
+
 def main():
     "Iterates through all JSON payloads, dispatching load according to supplied mode."
-        
-    def itemwise():
-        "Loads content item and nodes in a single request, except for binary assets."
-        
-        # assemble content substructure and add to payload properties
-        slingified_json, file_nodes = slingify(payload['nodes'])
-        
-        new_props = (   (':operation', 'import'),
-                        (':contentType', 'json'),
-                        (':content', slingified_json)
-                        )
-        map(lambda p: payload['properties'].append({'name': p[0], 'value': p[1]}), new_props)
-
-        # populate the page
-        populate_node(base_path, payload['properties'], label='  Content item')
-        
-        # populate binaries
-        for node in file_nodes:
-            node_path = '/'.join([base_path, node['path']])
-            populate_node(node_path, node['properties'], label='    Binary')
-    
-    def nodewise():
-        "Loads content item and each node's content as a separate request."
-        
-        # populate the page
-        populate_node(base_path, payload['properties'], label='  Content item')
-        
-        # populate the nodes
-        for node in payload['nodes']:
-            node_path = '/'.join([base_path, node['path']])
-            populate_node(node_path, node['properties'], label='    Node')
     
     for json_path in JSON_PATHS:
         payload = json.loads(read_file(json_path))
         base_path = CQ_SERVER + payload['path']
-        
-        locals()[MODE]() # call function corresponding to mode
+        globals()[MODE](base_path, payload) # call function corresponding to mode
 
 if __name__ == "__main__":
+    #------ CUSTOM PARAMS // pass in via command line -----------------------------
+    assert len(sys.argv) >= 5, "Supply cq_server, username, password, payloads_path, [mode] when calling this script."
+    CQ_SERVER, USERNAME, PASSWORD, PAYLOADS_PATH = sys.argv[1:5]
+
+    try:
+        MODE = sys.argv[5]
+    except IndexError:
+        MODE = 'itemwise'
+    assert MODE in ['itemwise', 'nodewise'], "Supported modes are 'itemwise' and 'nodewise'."
+    print '> Loading %s...' % MODE
+
+    HEADERS = basic_authorize(USERNAME, PASSWORD) # USERNAME, PASSWORD for CQ user
+    JSON_PATHS = get_file_list(PAYLOADS_PATH, '.*\.json') # directory of .json files
+    #------------------------------------------------------------------------------
+
     main()

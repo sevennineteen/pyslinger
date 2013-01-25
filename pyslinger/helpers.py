@@ -7,8 +7,8 @@ import mimetypes
 from uuid import uuid4
 from html2text import html2text
 
-def cq_auth_header(username, password):
-    "Converts user credentials to CQ-required request header."
+def basic_authorize(username, password):
+    "Converts user credentials to HTTP Basic Authentication request header."
     return {'Authorization': 'Basic %s' % (base64.b64encode('%s:%s' % (username, password)))}
 
 def post_commentator(func):
