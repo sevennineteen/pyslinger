@@ -10,7 +10,7 @@ CQ_SERVER = 'http://localhost:4502'
 USERNAME = 'admin'
 PASSWORD = 'admin'
 PAYLOADS_PATH= './payloads'
-
+HEADERS = basic_authorize(USERNAME, PASSWORD) # USERNAME, PASSWORD for CQ user
 
 def populate_node(path, properties, **kwargs):
     "Organizes properties into form fields and posts the multipart form data."
