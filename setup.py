@@ -8,7 +8,7 @@ setup(name='Pyslinger',
 	url='https://github.com/sevennineteen/pyslinger',
 	packages=['pyslinger'],
 	install_requires=[
-		'simplejson'
+		'simplejson',
 		'odict',
 		'html2text'
 		]
