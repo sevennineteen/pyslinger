@@ -93,7 +93,7 @@ def load_item(payload, **kwargs):
         node_path = '/'.join([base_path, node['path']])
         populate_node(node_path, node['properties'], label='    Binary')
 
-def load_node(payload, **kwargs):
+def load_nodes(payload, **kwargs):
     "Loads content item and each node's content as a separate request."
 
     base_path = kwargs.get('base_path', CQ_SERVER + payload['path'])
@@ -111,7 +111,7 @@ def main(mode):
     
     modes = {
         'itemwise': load_item,
-        'nodewise': load_node
+        'nodewise': load_nodes
     }
 
     for json_path in JSON_PATHS:
