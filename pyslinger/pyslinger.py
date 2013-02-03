@@ -1,7 +1,8 @@
 "This script loads supplied JSON payloads into Adobe CQ."
 
 import sys
-import simplejson as json
+try: import simplejson as json
+except ImportError: import json
 from helpers import basic_authorize, post_multipart, get_file_list, read_file, DotDict
 from odict import odict
 
