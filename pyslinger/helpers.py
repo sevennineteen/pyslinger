@@ -1,14 +1,14 @@
 import codecs
 import os
 import re
-import httplib2
+import httplib, urlparse
 import base64
 import mimetypes
 from uuid import uuid4
 from BeautifulSoup import BeautifulSoup
 
 class DotDict(dict):
-    "Enables access to dictionary keys via dot notation"
+    "Enables access to dictionary keys via dot notation."
     def __getattr__(self, attr):
         return self.get(attr, None)
     __setattr__= dict.__setitem__
@@ -32,9 +32,9 @@ def post_commentator(func):
         error = None if status in [200, 201] else soup.find('div', id='Message').text
 
         return DotDict({
-            'status': response[0]['status'],
+            'status': status,
             'node': node,
-            'message': soup.title.text,
+            'message': message,
             'error': error,
             })
     return decorated
@@ -72,19 +72,32 @@ def encode_multipart(fields, files):
 @post_commentator
 def post_multipart(url, fields=[], files=[], headers={}, credentials=None):
     "Sends a POST containing multipart form data."
-    http = httplib2.Http()
-    if credentials:
-        http.add_credentials(credentials[0], credentials[1])
+    
+    def get_parts(url):
+        "Deconstructs URL into host, port, selector."
+        urlparts = urlparse.urlsplit(url)
+        try:
+            host, port = urlparts[1].split(':')
+        except ValueError:
+            host, port = urlparts[1], '80'
+        return {
+            'host': host,
+            'port': int(port),
+            'selector': urlparts[2],
+            }
+    
+    parts = get_parts(url)
+    http = httplib.HTTPConnection(parts.host, parts.port)
     content_type, body = encode_multipart(fields, files)
     headers.update({'Content-Type': content_type})
-    return http.request(url, 'POST', body, headers=headers)
+    return http.request('POST', parts.selector, body, headers)
 
 def get_file_list(path, regex_filter=''):
     "Returns list of all non-directory files under the path, with optional filter."
     file_list = []
     for dirname, dirnames, filenames in os.walk(path):
         for filename in filenames:
-           file_list.append(os.path.join(dirname, filename))
+            file_list.append(os.path.join(dirname, filename))
     return [f for f in file_list if re.match(regex_filter, f)]
 
 def read_file(file_path, mode='r', encoding=None):
