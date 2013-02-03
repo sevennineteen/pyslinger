@@ -5,7 +5,7 @@ import httplib2
 import base64
 import mimetypes
 from uuid import uuid4
-from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 
 class DotDict(dict):
     "Enables access to dictionary keys via dot notation"

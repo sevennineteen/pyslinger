@@ -8,8 +8,7 @@ setup(name='Pyslinger',
 	url='https://github.com/sevennineteen/pyslinger',
 	packages=['pyslinger'],
 	install_requires=[
-		'simplejson',
 		'odict',
-		'beautifulsoup4',
+		'beautifulsoup',
 		]
 	)
