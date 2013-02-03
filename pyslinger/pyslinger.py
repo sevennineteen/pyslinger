@@ -124,7 +124,7 @@ def load_nodes(payload, **kwargs):
 
 def dump_errors(result):
     "Prints formatted summary of load errors."
-    print ' ! Error loading %s' % result.item
+    print ' ! Error loading to %s' % result.url
     for r in result.receipts:
         if r.error:
             print '\t[%s] %s' % (r.status, r.node)
