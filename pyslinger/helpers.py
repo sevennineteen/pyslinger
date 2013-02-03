@@ -5,7 +5,14 @@ import httplib2
 import base64
 import mimetypes
 from uuid import uuid4
-from html2text import html2text
+from bs4 import BeautifulSoup
+
+class DotDict(dict):
+    "Enables access to dictionary keys via dot notation"
+    def __getattr__(self, attr):
+        return self.get(attr, None)
+    __setattr__= dict.__setitem__
+    __delattr__= dict.__delitem__
 
 def basic_authorize(username, password):
     "Converts user credentials to HTTP Basic Authentication request header."
@@ -13,17 +20,23 @@ def basic_authorize(username, password):
 
 def post_commentator(func):
     "Provides information about post status; for use as decorator."
-    statuses = { '200': 'updated', '201': 'created' }
     
     def decorated(*args, **kwargs):
         response = func(*args)
-        try:
-            print '%s %s: %s' % (kwargs.get('label', 'Node'), statuses[response[0]['status']], args[0])
-        except:
-            try:
-                print html2text(response[1]).replace('\n\n', '\n')
-            except:
-                print response[1]
+
+        soup = BeautifulSoup(response[1])
+        node = args[0]
+
+        status = int(response[0]['status'])
+        message = soup.title.text,
+        error = None if status in [200, 201] else soup.find('div', id='Message').text
+
+        return DotDict({
+            'status': response[0]['status'],
+            'node': node,
+            'message': soup.title.text,
+            'error': error,
+            })
     return decorated
 
 def get_content_type(filename):
@@ -76,10 +89,7 @@ def get_file_list(path, regex_filter=''):
 
 def read_file(file_path, mode='r', encoding=None):
     "Returns content of file at specified path."
-    try:
-        file_obj = codecs.open(file_path, mode, encoding)
-        contents = file_obj.read()
-        file_obj.close()
-        return contents
-    except:
-        print 'Could not ingest file at path: %s' % file_path
+    file_obj = codecs.open(file_path, mode, encoding)
+    contents = file_obj.read()
+    file_obj.close()
+    return contents

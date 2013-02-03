@@ -10,6 +10,6 @@ setup(name='Pyslinger',
 	install_requires=[
 		'simplejson',
 		'odict',
-		'html2text'
+		'beautifulsoup4',
 		]
 	)

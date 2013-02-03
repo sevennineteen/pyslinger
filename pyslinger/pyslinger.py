@@ -2,7 +2,7 @@
 
 import sys
 import simplejson as json
-from helpers import basic_authorize, post_multipart, get_file_list, read_file
+from helpers import basic_authorize, post_multipart, get_file_list, read_file, DotDict
 from odict import odict
 
 # Initialize constants with sensible defaults
@@ -11,6 +11,14 @@ USERNAME = 'admin'
 PASSWORD = 'admin'
 PAYLOADS_PATH= './payloads'
 HEADERS = basic_authorize(USERNAME, PASSWORD) # USERNAME, PASSWORD for CQ user
+
+def verified(receipts):
+    "Returns True if no errors found in provided load receipts."
+    return DotDict({
+        'success': not any([r.error for r in receipts]),
+        'item': receipts[0].node,
+        'receipts': receipts,
+        })
 
 def populate_node(path, properties, **kwargs):
     "Organizes properties into form fields and posts the multipart form data."
@@ -37,7 +45,7 @@ def populate_node(path, properties, **kwargs):
     if files:
         fields.append(('%s@TypeHint' % p['name'], p['type']))
     
-    post_multipart(path, fields, files, HEADERS, **kwargs)
+    return post_multipart(path, fields, files, HEADERS, **kwargs)
 
 def slingify(nodes):
     "Returns the node contents as Sling-ready JSON (and any binary file nodes)."
@@ -85,26 +93,42 @@ def load_item(payload, **kwargs):
                     )
     map(lambda p: payload['properties'].append({'name': p[0], 'value': p[1]}), new_props)
 
+    receipts = []
+
     # populate the page
-    populate_node(base_path, payload['properties'], label='  Content item')
+    receipts.append(populate_node(base_path, payload['properties']))
     
     # populate binaries
     for node in file_nodes:
         node_path = '/'.join([base_path, node['path']])
-        populate_node(node_path, node['properties'], label='    Binary')
+        receipts.append(populate_node(node_path, node['properties']))
+
+    return verified(receipts)
 
 def load_nodes(payload, **kwargs):
     "Loads content item and each node's content as a separate request."
 
     base_path = kwargs.get('base_path', CQ_SERVER + payload['path'])
+
+    receipts = []
     
     # populate the page
-    populate_node(base_path, payload['properties'], label='  Content item')
+    receipts.append(populate_node(base_path, payload['properties']))
     
     # populate the nodes
     for node in payload['nodes']:
         node_path = '/'.join([base_path, node['path']])
-        populate_node(node_path, node['properties'], label='    Node')
+        receipts.append(populate_node(node_path, node['properties']))
+
+    return verified(receipts)
+
+def dump_errors(result):
+    "Prints formatted summary of load errors."
+    print ' ! Error loading %s' % result.item
+    for r in result.receipts:
+        if r.error:
+            print '\t[%s] %s' % (r.status, r.node)
+            print '\t\t%s' % r.error
 
 def main(mode):
     "Iterates through all JSON payloads, dispatching load according to supplied mode."
@@ -117,7 +141,12 @@ def main(mode):
     for json_path in JSON_PATHS:
         payload = json.loads(read_file(json_path))
         
-        modes[mode](payload) # call function corresponding to mode
+        result = modes[mode](payload) # call function corresponding to mode
+
+        if result.success:
+            print '   Successfully loaded %s' % result.item
+        else:
+            dump_errors(result)
 
 if __name__ == "__main__":
     #------ CUSTOM PARAMS // pass in via command line -----------------------------
@@ -129,7 +158,7 @@ if __name__ == "__main__":
     except IndexError:
         MODE = 'itemwise'
     assert MODE in ['itemwise', 'nodewise'], "Supported modes are 'itemwise' and 'nodewise'."
-    print '> Loading %s...' % MODE
+    print '...Loading %s...' % MODE
 
     HEADERS = basic_authorize(USERNAME, PASSWORD) # USERNAME, PASSWORD for CQ user
     JSON_PATHS = get_file_list(PAYLOADS_PATH, '.*\.json') # directory of .json files
