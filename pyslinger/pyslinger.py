@@ -16,7 +16,7 @@ def verified(receipts):
     "Returns True if no errors found in provided load receipts."
     return DotDict({
         'success': not any([r.error for r in receipts]),
-        'item': receipts[0].node,
+        'url': receipts[0].node,
         'receipts': receipts,
         })
 
@@ -144,7 +144,7 @@ def main(mode):
         result = modes[mode](payload) # call function corresponding to mode
 
         if result.success:
-            print '   Successfully loaded %s' % result.item
+            print '   Successfully loaded to %s' % result.url
         else:
             dump_errors(result)
 
