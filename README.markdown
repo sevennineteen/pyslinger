@@ -73,6 +73,7 @@ For example, using a templating language like [Jinja2](http://jinja.pocoo.org/do
 
     from jinja2 import Environment, PackageLoader
     from pyslinger import pyslinger
+    import json
 
     # Set destination server/credentials if not defaults
     pyslinger.CQ_SERVER = 'http://cqdev:4502'
