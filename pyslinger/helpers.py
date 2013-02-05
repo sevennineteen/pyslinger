@@ -8,7 +8,7 @@ from uuid import uuid4
 from bs4 import BeautifulSoup
 
 class DotDict(dict):
-    "Enables access to dictionary keys via dot notation"
+    "Enables access to dictionary keys via dot notation."
     def __getattr__(self, attr):
         return self.get(attr, None)
     __setattr__= dict.__setitem__
@@ -32,9 +32,9 @@ def post_commentator(func):
         error = None if status in [200, 201] else soup.find('div', id='Message').text
 
         return DotDict({
-            'status': response[0]['status'],
+            'status': status,
             'node': node,
-            'message': soup.title.text,
+            'message': message,
             'error': error,
             })
     return decorated
