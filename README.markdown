@@ -96,7 +96,7 @@ For example, using a templating language like [Jinja2](http://jinja.pocoo.org/do
     # Load using Pyslinger
     result = pyslinger.load_item(json.loads(payload))
     if result.success:
-        print 'Loaded to %s' % result.item
+        print 'Loaded to %s' % result.url
     else:
         pyslinger.dump_errors(result)
 
