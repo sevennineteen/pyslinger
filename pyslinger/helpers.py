@@ -6,6 +6,7 @@ import base64
 import mimetypes
 from uuid import uuid4
 from BeautifulSoup import BeautifulSoup
+from org.python.core.util import StringUtil
 
 class DotDict(dict):
     "Enables access to dictionary keys via dot notation."
@@ -24,10 +25,10 @@ def post_commentator(func):
     def decorated(*args, **kwargs):
         response = func(*args)
 
-        soup = BeautifulSoup(response[1])
+        soup = BeautifulSoup(response.read())
         node = args[0]
 
-        status = int(response[0]['status'])
+        status = response.status
         message = soup.title.text,
         error = None if status in [200, 201] else soup.find('div', id='Message').text
 
@@ -61,7 +62,7 @@ def encode_multipart(fields, files):
                 'Content-Disposition: form-data; name="%s"; filename="%s"' % (name, filename),
                 'Content-Type: %s' % get_content_type(filename),
                 '',
-                value,
+                StringUtil.fromBytes(value),
                 ])
     L.append('--' + boundary + '--')
     L.append('')
@@ -80,17 +81,18 @@ def post_multipart(url, fields=[], files=[], headers={}, credentials=None):
             host, port = urlparts[1].split(':')
         except ValueError:
             host, port = urlparts[1], '80'
-        return {
+        return DotDict({
             'host': host,
             'port': int(port),
             'selector': urlparts[2],
-            }
+            })
     
     parts = get_parts(url)
     http = httplib.HTTPConnection(parts.host, parts.port)
     content_type, body = encode_multipart(fields, files)
     headers.update({'Content-Type': content_type})
-    return http.request('POST', parts.selector, body, headers)
+    http.request('POST', parts.selector, body, headers)
+    return http.getresponse()
 
 def get_file_list(path, regex_filter=''):
     "Returns list of all non-directory files under the path, with optional filter."
