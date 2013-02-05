@@ -29,7 +29,7 @@ def post_commentator(func):
         node = args[0]
 
         status = response.status
-        message = soup.title.text,
+        message = soup.title.text
         error = None if status in [200, 201] else soup.find('div', id='Message').text
 
         return DotDict({
