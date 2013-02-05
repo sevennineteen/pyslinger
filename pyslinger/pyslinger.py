@@ -25,10 +25,10 @@ def populate_node(path, properties, **kwargs):
     "Organizes properties into form fields and posts the multipart form data."
     
     # properties can be handled as strings by default
-    fields = [ (p['name'], p['value']) for p in properties if not p.has_key('type')]
+    fields = [(p['name'], p['value']) for p in properties if not p.has_key('type')]
     
     # properties with a type need to be hinted
-    hinted = [ hp for hp in properties if hp.has_key('type') and hp['type'] != 'nt:file']
+    hinted = [hp for hp in properties if hp.has_key('type') and hp['type'] != 'nt:file']
     for hp in hinted:
         if hp['value'].__class__.__name__ == 'str':
             fields.append((hp['name'], hp['value'])) # single item
