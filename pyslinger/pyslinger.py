@@ -11,7 +11,6 @@ CQ_SERVER = 'http://localhost:4502'
 USERNAME = 'admin'
 PASSWORD = 'admin'
 PAYLOADS_PATH= './payloads'
-HEADERS = basic_authorize(USERNAME, PASSWORD) # USERNAME, PASSWORD for CQ user
 
 def verified(receipts):
     "Returns True if no errors found in provided load receipts."
@@ -46,7 +45,7 @@ def populate_node(path, properties, **kwargs):
     if files:
         fields.append(('%s@TypeHint' % p['name'], p['type']))
     
-    return post_multipart(path, fields, files, HEADERS, **kwargs)
+    return post_multipart(path, fields, files, basic_authorize(USERNAME, PASSWORD), **kwargs)
 
 def slingify(nodes):
     "Returns the node contents as Sling-ready JSON (and any binary file nodes)."
@@ -161,7 +160,6 @@ if __name__ == "__main__":
     assert MODE in ['itemwise', 'nodewise'], "Supported modes are 'itemwise' and 'nodewise'."
     print '...Loading %s...' % MODE
 
-    HEADERS = basic_authorize(USERNAME, PASSWORD) # USERNAME, PASSWORD for CQ user
     JSON_PATHS = get_file_list(PAYLOADS_PATH, '.*\.json') # directory of .json files
     #------------------------------------------------------------------------------
 
