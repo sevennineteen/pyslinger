@@ -1,6 +1,7 @@
 "This script loads supplied JSON payloads into Adobe CQ."
 
 import sys
+import os
 try: import simplejson as json
 except ImportError: import json
 from helpers import basic_authorize, post_multipart, get_file_list, read_file, DotDict
@@ -11,6 +12,7 @@ CQ_SERVER = 'http://localhost:4502'
 USERNAME = 'admin'
 PASSWORD = 'admin'
 PAYLOADS_PATH= './payloads'
+STATIC_ROOT = '.'
 
 def verified(receipts):
     "Returns True if no errors found in provided load receipts."
@@ -38,7 +40,7 @@ def populate_node(path, properties, **kwargs):
     
     # properties typed as nt:file should be handled as files
     files = [   (   p['name'], p['value'].split('/')[-1], 
-                    read_file(p['value'], 'rb')
+                    read_file(os.path.join(STATIC_ROOT, p['value']), 'rb')
                     ) 
                 for p in properties 
                 if p.has_key('type') and p['type'] == 'nt:file' ]
