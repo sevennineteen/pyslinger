@@ -10,7 +10,7 @@ More information on the SlingPostServlet is available on the [Apache Sling](http
 
 ## Installation
 
-    pip install -e git+https://github.com/sevennineteen/pyslinger.git#egg=Pyslinger
+    pip install git+https://github.com/sevennineteen/pyslinger.git#egg=Pyslinger
 
 ## Usage
 
